@@ -8,14 +8,16 @@ load("data/preprocessed_internet_users.RData")
 p_times <- ggplot(global_internet_users, aes(x = year, y = number_of_internet_users)) +
   geom_point(aes(size = number_of_internet_users),
              shape = 21, alpha = 0.75, colour = "black", fill = "#035AA6FF") +
-  scale_x_continuous(breaks = seq(min(global_internet_users$year), max(global_internet_users$year), 10)) +
+  scale_x_continuous(breaks = seq(min(global_internet_users$year),
+                                  max(global_internet_users$year), 10)) +
+  scale_y_continuous(limits = c(0, 5000000000), expand = c(0, 0),
+                     breaks = seq(1e9, 5e9, 1e9),
+                     labels = scales::label_number(scale = 1e-9, suffix = " B")) +
   scale_size(range = c(1, 10)) +
-  theme_void() +
+  theme_classic() +
   theme(panel.grid.major.x = element_line(color = "grey", size = 0.2),
         axis.text.x = element_text(face = "bold"),
         axis.title.x = element_text(face = "bold"),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
         axis.title.y = element_blank(),
         aspect.ratio = 0.65,
         legend.position = "none")
