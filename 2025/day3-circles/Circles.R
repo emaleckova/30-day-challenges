@@ -15,3 +15,19 @@ ggplot(global_internet_users, aes(x = year, y = total_users)) +
         axis.title.y = element_blank(),
         aspect.ratio = 0.65,
         legend.position = "none")
+
+world_pop_2021 <- 7954448391
+users_2021 <- global_internet_users[global_internet_users$year == 2021, ]$total_users
+
+df_global_2021 <- data.frame(
+  "internet_user" = c("yes", "no"),
+  "n_people" = c(users_2021,
+                world_pop_2021 - users_2021)
+)
+
+ggplot(df_global_2021, aes(x = "", y = n_people, fill = internet_user)) +
+  geom_bar(stat = "identity", width = 1) +
+  scale_fill_manual(values = c("#F2F2F2FF", "#035AA6FF")) +
+  scale_y_continuous(labels = scales::comma) +
+  coord_polar(theta = "y") +
+  theme_minimal()
