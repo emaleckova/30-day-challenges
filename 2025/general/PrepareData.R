@@ -16,7 +16,7 @@ internet_users_by_income <- internet_users |>
 
 # 3. By continent
 internet_users_by_continent <- internet_users |> 
-  filter(entity %in% c("Africa", "Asia", "Europe", "North America", "South America"))
+  filter(entity %in% c("Africa", "Asia", "Europe", "North America", "South America", "Australia"))
 
 # 4. European Union
 internet_users_eu <- internet_users |>
