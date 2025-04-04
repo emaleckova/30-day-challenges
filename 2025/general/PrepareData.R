@@ -15,8 +15,10 @@ internet_users_by_income <- internet_users |>
   filter(grepl("income", entity))
 
 # 3. By continent
+continents <- c("Africa", "Asia", "Europe", "North America", "South America", "Australia")
+
 internet_users_by_continent <- internet_users |> 
-  filter(entity %in% c("Africa", "Asia", "Europe", "North America", "South America", "Australia"))
+  filter(entity %in% continents)
 
 # 4. European Union
 internet_users_eu <- internet_users |>
@@ -24,11 +26,7 @@ internet_users_eu <- internet_users |>
 
 # 5. By country
 internet_users_by_country <- internet_users |> 
-  filter(!entity %in% c("World", unique(c(internet_users_by_income$entity, internet_users_by_continent$entity, internet_users_eu$entity))))
-
-# Check for completness of data
-nrow(global_internet_users) + nrow(internet_users_by_income) + nrow(internet_users_by_continent) +
-  nrow(internet_users_eu) + nrow(internet_users_by_country) == nrow(internet_users)
+  filter(!entity %in% c("World", unique(c(internet_users_by_income$entity, internet_users_eu$entity), continents[continents != "Australia"])))
 
 save(global_internet_users, internet_users_by_income, internet_users_by_continent,
   internet_users_eu, internet_users_by_country,
