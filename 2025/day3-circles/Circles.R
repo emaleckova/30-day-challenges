@@ -16,7 +16,7 @@ ggplot(global_internet_users, aes(x = year, y = total_users)) +
         aspect.ratio = 0.65,
         legend.position = "none")
 
-world_pop_2021 <- 7954448391
+world_pop_2021 <- 7954448391 #source: https://www.worldometers.info/world-population/
 users_2021 <- global_internet_users[global_internet_users$year == 2021, ]$total_users
 
 df_global_2021 <- data.frame(
