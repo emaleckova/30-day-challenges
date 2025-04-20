@@ -1,0 +1,13 @@
+---
+title: "Eva's #30DayChartChallenge"
+---
+
+# 2025
+
+![Day 3: Circles](../2025/plots/03-Circles.png){group="2025-gallery"}
+
+![Day 5: Ranking](../2025/plots/05-Ranking-Percentage.png){group="2025-gallery"}
+
+![Day 12: data-gov](../2025/plots/12-data-gov.png){group="2025-gallery"}
+
+![Day 20: Urbanization](../2025/plots/20-Urbanization.png){group="2025-gallery"}

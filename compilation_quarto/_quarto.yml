@@ -1,0 +1,21 @@
+project:
+  type: website
+
+website:
+  title: "#30DayChartChallenge by Eva"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+
+lightbox: true
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true
+
