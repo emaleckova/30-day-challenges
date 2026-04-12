@@ -66,11 +66,14 @@ showtext_auto()
 ptitle <- ""
 
 ggplot() +
-  geom_vline(xintercept = seq(50, 100, 10), linetype = "dashed", colour = "grey80") +
-  geom_vline(xintercept = median(df_scores1$score), colour = "grey80", linewidth = 3) +
-  geom_vline(xintercept = median(df_scores2$score), colour = "grey80", linewidth = 3) +
-  annotate(geom = "text", x = median(df_scores1$score), y = "Serbia", label = "2014", size = 2.5, angle = 90) +
-  annotate(geom = "text", x = median(df_scores2$score), y = "Serbia", label = "2015", size = 2.5, angle = 90) +
+  geom_rect(aes(xmin = 85, xmax = 100, ymin = -Inf, ymax = Inf), fill = "grey80") +
+  geom_rect(aes(xmin = 70, xmax = 85, ymin = -Inf, ymax = Inf), fill = "grey60") +
+  geom_rect(aes(xmin = 55, xmax = 70, ymin = -Inf, ymax = Inf), fill = "grey40") +
+  geom_rect(aes(xmin = 40, xmax = 55, ymin = -Inf, ymax = Inf), fill = "grey20") +
+  geom_rect(aes(xmin = 30, xmax = 40, ymin = -Inf, ymax = Inf), fill = "grey5") +
+  geom_vline(xintercept = c(85, 70, 55, 40), linetype = "dashed", colour = "grey80") +
+  annotate(geom = "text", x = c(40, 55, 70, 85, 100), y = "Norway", hjust = 1.5,
+           label = c("very serious", "difficult", "problematic", "satisfactory", "good"), colour = "white", fontface = "bold", size = 2.5) +
   geom_segment(data = df_scores1,
                aes(x = score, y = country_en,
                    xend = df_scores2$score, yend = df_scores2$country_en,
@@ -84,6 +87,7 @@ ggplot() +
   geom_flag(data = filter(score_dat, year == 2025),
             aes(x = score, y = country_en, country = iso2), size = 4) +
   scale_y_discrete(sec.axis = dup_axis(name = "")) +
+  scale_x_continuous(breaks = c(40, 55, 70, 85)) +
   theme_void() +
   theme(plot.margin = margin(2, 2, 2, 2),
         text = element_text(family = "nunito", color = "#4a4e4d"),
