@@ -16,7 +16,10 @@ source("commons/CreateSocialCaption.R")
 # Create input data ------------------------------------------------------------
 # ---------------------------------------------------------------------------- #
 
-# Credits: ChatGPT
+# Suitable sources would have been secondhandsongs.org and/or musicbrainz.com
+# But APIs were difficult, therefore a compilation by  ChatGPT
+# which seems to kind of reflect the true state of the databases
+
 elvis_covers <- data.frame(
   song = c(
     # Early rock & breakthrough (1950s)
@@ -121,11 +124,11 @@ elvis_covers <- data.frame(
 # Plot -------------------------------------------------------------------------
 # ---------------------------------------------------------------------------- #
 
-font_add_google(name = "Lobster", family = "lobster")
-font_add_google(name = "League Spartan", family = "spartan")
+# Setup: custom fonts, sourced from Google
+font_add_google(name = c("Lobster", "League Spartan"), family = c("lobster", "spartan"))
 showtext_auto()
 
-# Plot background with caption
+# Plot background: an LP in the background & title with caption
 
 circ_sequence <- seq(1, 150, by = 5)
 
@@ -147,39 +150,46 @@ p_bg <- ggplot(data = circles, aes(x = 1, y = 1, size = size)) +
   scale_x_continuous(limits = c(-2, 5)) +
   scale_y_continuous(limits = c(-151, 152)) +
   labs(title = "Most Covered Songs of the King",
+       subtitle = "Elvis Presley’s songs from the mid-1950s and early 1970s are his most covered works",
        caption = plot_cap) +
   theme_void() +
   theme(panel.background = element_rect(fill = "black"),
         plot.background = element_rect(fill = "black"),
+        plot.margin = margin(10, 0, 0, 0),
         plot.title = element_text(family = "lobster", size = 30, colour = "white", hjust = 0.5),
-        plot.caption = element_markdown(lineheight = 1.15, hjust = 0.95, align_widths = F),
+        plot.subtitle = element_text(family = "spartan", size = 14, colour = "white",
+                                     hjust = 0.5, margin = margin(10, 0, 10, 0)),
+        plot.caption = element_markdown(family = "spartan", lineheight = 1.15,
+                                        padding = unit(10, "pt")),
+        aspect.ratio = 0.5,
         legend.position = "none")
 
-# colours from palette https://color.adobe.com/s-Presley-color-theme-1560137/
-
-# arrange data by year -> text placement int he plot
+# arrange data by year 
+# > fix what row 1 references to & ultimately text placement in the plot
 elvis_covers <- elvis_covers |> 
   arrange(-estimated_covers)
 
+# colours from palette https://color.adobe.com/s-Presley-color-theme-1560137/
+
 p_covers <- ggplot(data = elvis_covers, aes(x = release_year, y = estimated_covers)) +
-  geom_point_blur(colour = "#F2D649", size = 3, blur_size = 10) +
-  geom_point(colour = "#F2C84B", size = 2.5) +
+  geom_point_blur(aes(size = estimated_covers), colour = "#F2D649", blur_size = 10) +
+  geom_point(aes(size = estimated_covers), colour = "#F2C84B") +
   annotate(geom = "text", x = elvis_covers[1, ]$release_year, y = elvis_covers[1, ]$estimated_covers,
            label = glue("Covered {elvis_covers[1, ]$estimated_covers}x"),
            size = 3, colour = "white", family = "spartan",
            hjust = -0.5, vjust = -0.5) +
   ggrepel::geom_text_repel(data = elvis_covers[2:nrow(elvis_covers), ],
             aes(x = release_year, y = estimated_covers, label = paste0(estimated_covers, "x")),
-            size = 3, colour = "white", family = "spartan", nudge_y = 1) +
+            size = 3, colour = "white", family = "spartan", nudge_y = 1.5) +
   ggrepel::geom_text_repel(data = elvis_covers[elvis_covers$estimated_covers >= 400, ],
                            aes(x = release_year, y = estimated_covers, label = song),
                            size = 4, colour = "#F2D649", family = "spartan",
-                           min.segment.length = 0, nudge_y = -15) +
-  scale_x_continuous(limits = c(1950, 1980), expand = expansion(add = c(0, 10))) +
+                           nudge_y = -30) +
+  scale_size_continuous(range = c(1, 10)) +
+  scale_x_continuous(limits = c(1950, 1980), expand = expansion(add = c(0, 0))) +
   scale_y_continuous(expand = expansion(add = c(35, 25))) +
   theme_void() +
   theme(plot.background = element_rect(fill = fill_alpha("black", 0.75)),
-        plot.title = element_text(family = "lobster", size = 22, colour = "white", hjust = 0.5),
         axis.line = element_line(colour = "white", linewidth = 1),
         axis.text.x = element_text(family = "spartan", colour = "white", size = 14),
         axis.ticks.x = element_line(colour = "white", linewidth = 1),
@@ -189,11 +199,21 @@ p_covers <- ggplot(data = elvis_covers, aes(x = release_year, y = estimated_cove
 
 p_covers
 
-p_assembled <- ggdraw(p_bg) +
-  draw_plot(p_covers, x = -0.05, y = 0.01, scale = 0.65)
-
 # Data as insert
+# Freeze the background as grob before to avoid unexpected shifting of spacing of elements
+p_bg_fixed <- ggplotGrob(p_bg)
+p_assembled <- ggdraw() + draw_grob(p_bg_fixed) +
+  draw_plot(p_covers, x = -0.05, y = -0.025, scale = 0.65)
 
 p_assembled
 
-ggsave(plot = p_assembled, filename = "2026/plots/18.png", width = 1200, height = 800, units = "px", bg = "white", scale = 2.5)
+# Export
+# ggsave(plot = p_assembled,
+#        filename = "2026/plots/18-Remake.png",
+#        width = 6,
+#        height = 3.6,
+#        dpi = 300,
+#        bg = "black",
+#        device = ragg::agg_png)
+
+# Saved from Plots pane this time.
