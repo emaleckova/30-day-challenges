@@ -69,7 +69,7 @@ DisplayPlots <- function(df_plots) {
 
       cat(
         sprintf(
-          '![Day %s: %s](%s){margin="50px 50px 50px 50px"}\n\n',
+          '![Day %s: %s](%s){width="650px"}\n\n',
           d,
           pprompt,
           path
@@ -133,6 +133,7 @@ df_plots <- data.frame(
 DisplayPlots(df_plots)
 ```
 
+
 **Resources**
 
 
@@ -178,5 +179,6 @@ df_plots <- data.frame(
 
 DisplayPlots(df_plots)
 ```
+
 
 **Resources**
