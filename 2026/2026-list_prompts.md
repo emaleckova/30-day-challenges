@@ -13,8 +13,7 @@
   9. Wealth\
   10. Pop culture\
   11. Physical\
-  12. data day: [Reporters Without Borders
-](https://rsf.org/en/index?year=2024)
+  12. data day: [Reporters Without Borders](https://rsf.org/en/index?year=2024)
 * **Relationships**\
   13. Ecosystems\
   14. Trade\
