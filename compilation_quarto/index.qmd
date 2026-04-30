@@ -48,7 +48,7 @@ CleanPromptsMd <- function(prompts_path) {
 }
 
 #' DisplayPlots
-#' @param df_plots - a data frame with columns category, prompt and path as obtained with the CleanPromptsMd() function
+#' @param df_plots - a data frame with columns category, prompt and path (figure) and path_script as obtained with the CleanPromptsMd() function
 #' @returns A quarto syntax to display plots sorted by category and in a two-column layout.
 #' Use in a code chunk with option `results: asis`
 
@@ -58,11 +58,14 @@ DisplayPlots <- function(df_plots) {
 
     cat(paste0(sprintf("## %s", ctg)), "\n\n")
 
-    cat("::: {.columns layout-ncol=2}\n\n")
-
     for (d in ctg_plots$prompt_day) {
       pprompt <- ctg_plots[ctg_plots$prompt_day == d, ]$prompt
       path <- ctg_plots[ctg_plots$prompt_day == d, ]$path
+      path_script <- ctg_plots[ctg_plots$prompt_day == d, ]$path_script
+
+      cat("::: {.panel-tabset}\n\n")
+
+      cat(sprintf("### Day %s: %s\n\n", d, pprompt))
 
       cat(
         sprintf(
@@ -72,9 +75,17 @@ DisplayPlots <- function(df_plots) {
           path
         )
       )
-    }
 
-    cat(":::\n\n")
+      cat("### Code\n\n")
+
+      # For proper monospace formatting
+      cat("```r {eval=FALSE}\n")
+      cat(readLines(path_script), sep = "\n")
+      cat("\n```\n\n")
+
+
+      cat(":::\n\n") # panel-tabset end
+    }
   }
 }
 ```
@@ -105,6 +116,13 @@ df_plots <- df_plots |>
 
 # Categories with plots
 categories <- unique(df_plots$category)
+
+script_files <- list.files("../2026/", pattern = ".R$", full.names = T)
+df_plots <- data.frame(
+  "path_script" = script_files,
+  "prompt_day" = as.numeric(str_extract(string = basename(script_files), pattern = "^\\d+"))
+) |> 
+  left_join(df_plots, by = "prompt_day")
 ```
 
 
@@ -144,6 +162,13 @@ df_plots <- df_plots |>
 
 # Categories with plots
 categories <- unique(df_plots$category)
+
+script_files <- list.files("../2025/", pattern = ".R$", full.names = T)
+df_plots <- data.frame(
+  "path_script" = script_files,
+  "prompt_day" = as.numeric(str_extract(string = basename(script_files), pattern = "^\\d+"))
+) |> 
+  left_join(df_plots, by = "prompt_day")
 ```
 
 
