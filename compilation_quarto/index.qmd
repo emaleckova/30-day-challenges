@@ -33,14 +33,14 @@ prompts <- prompts |>
 
 # Isolate category amd prompt into separate columns
 prompts <- prompts |> 
-  mutate(day = as.numeric(gsub(". ", "", str_extract(string = prompt, pattern = "^\\d+. "))),
+  mutate(prompt_day = as.numeric(gsub(". ", "", str_extract(string = prompt, pattern = "^\\d+. "))),
          category = case_when(
-           is.na(day) ~ prompt,
+           is.na(prompt_day) ~ gsub(" ", "", prompt),
            TRUE ~ NA
          ),
-         prompt = gsub("\\d+. ", "", prompt)) |> 
+         prompt = str_to_sentence(gsub("\\d+. ", "", prompt))) |> 
   fill(category, .direction = "down") |> 
-  filter_out(is.na(day))
+  filter_out(is.na(prompt_day))
 ```
 
 
@@ -51,22 +51,45 @@ plot_files <- list.files("../2025/plots/", pattern = "png", full.names = T)
 
 df_plots <- data.frame(
   "path" = plot_files,
-  "day" = as.numeric(str_extract(string = basename(plot_files), pattern = "^\\d+"))
+  "prompt_day" = as.numeric(str_extract(string = basename(plot_files), pattern = "^\\d+"))
 ) |> 
-  left_join(prompts, by = "day")
+  left_join(prompts, by = "prompt_day")
+
+df_plots <- df_plots |> 
+  filter_out(grepl("exclude.png",  path))
+
+# Categories with plots
+categories <- unique(df_plots$category)
 ```
 
 
-::: {#2025-gallery layout-ncol=2}
+```{r}
+#| results: asis
 
-![Day 3: Circles](../2025/plots/03-Circles.png){group="2025-gallery"}
+for (ctg in categories) {
+  ctg_plots <- filter(df_plots, category == ctg)
+  
+  cat(paste0(sprintf("## %s", ctg)), "\n\n")
+  
+  cat("::: {.columns layout-ncol=2}\n\n")
+  
+  for (d in ctg_plots$prompt_day) {
+    pprompt <- ctg_plots[ctg_plots$prompt_day == d, ]$prompt
+    path  <- ctg_plots[ctg_plots$prompt_day == d, ]$path
 
-![Day 5: Ranking](../2025/plots/05-Ranking-Percentage.png){group="2025-gallery"}
-
-![Day 12: data.gov](../2025/plots/12-data-gov.png){group="2025-gallery"}
-
-![Day 20: Urbanization](../2025/plots/20-Urbanization.png){group="2025-gallery" margin="50px 50px 50px 50px"}
-
-:::
+    cat(
+      sprintf(
+        '![Day %s: %s](%s){margin="50px 50px 50px 50px"}\n\n',
+        d,
+        pprompt,
+        path
+      )
+    )
+  }
+  
+  cat(":::\n\n")
+  
+}
+```
 
 **Resources**
