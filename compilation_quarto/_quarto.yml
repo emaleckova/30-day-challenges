@@ -12,7 +12,8 @@ format:
     grid:
       body-width: 1000px
     theme:
-      - cosmo
+      light: [flatly, styles.scss]
+      dark: [darkly, styles.scss]
     toc: true
     self-contained: true
     
