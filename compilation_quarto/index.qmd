@@ -1,51 +1,135 @@
 ---
-title: "Eva's #30DayChartChallenge"
+title: "Eva's #30DayChartChallenge Gallery"
 ---
 
-::: {.callout-info}
-#30DayChartChallenge
+::: {.callout-note}
+## #30DayChartChallenge
 
-#30DayChartChallenge in April.
+#30DayChartChallenge is a global, community-driven data visualization initiative taking place annually in April. Everyone is invited to create and share one chart per day for 30 days, each based on a different prompt.
 :::
 
 ```{r}
+#| label: session-setup
+
 library(dplyr)
 library(tidyr)
 library(stringr)
 ```
 
 
+```{r}
+#| label: custom-functions
+
+#' CleanPromptsMd
+#' @param prompts_path - a character vector - path to a md file with categories and prompts per day as obtained from the official challenge repo
+#' @returns A data frame with category and prompt and path to the produced plot for each day which was worked on
+
+CleanPromptsMd <- function(prompts_path) {
+  prompts <- read.delim(prompts_path, header = T, col.names = "prompt")
+  
+  # Remove markdown styling characters
+  prompts <- prompts |>
+    mutate(prompt = gsub("  |[\\]|[*]", "", prompt))
+
+  # Isolate category amd prompt into separate columns
+  prompts <- prompts |>
+    mutate(
+      prompt_day = as.numeric(gsub(". ", "", str_extract(string = prompt, pattern = "^\\d+. "))),
+      category = case_when(
+        is.na(prompt_day) ~ gsub(" ", "", prompt),
+        TRUE ~ NA
+      ),
+      prompt = str_to_sentence(gsub("\\d+. ", "", prompt))
+    ) |>
+    fill(category, .direction = "down") |>
+    filter_out(is.na(prompt_day))
+  
+  return(prompts)
+}
+
+#' DisplayPlots
+#' @param df_plots - a data frame with columns category, prompt and path as obtained with the CleanPromptsMd() function
+#' @returns A quarto syntax to display plots sorted by category and in a two-column layout.
+#' Use in a code chunk with option `results: asis`
+
+DisplayPlots <- function(df_plots) {
+  for (ctg in categories) {
+    ctg_plots <- filter(df_plots, category == ctg)
+
+    cat(paste0(sprintf("## %s", ctg)), "\n\n")
+
+    cat("::: {.columns layout-ncol=2}\n\n")
+
+    for (d in ctg_plots$prompt_day) {
+      pprompt <- ctg_plots[ctg_plots$prompt_day == d, ]$prompt
+      path <- ctg_plots[ctg_plots$prompt_day == d, ]$path
+
+      cat(
+        sprintf(
+          '![Day %s: %s](%s){margin="50px 50px 50px 50px"}\n\n',
+          d,
+          pprompt,
+          path
+        )
+      )
+    }
+
+    cat(":::\n\n")
+  }
+}
+```
+
+
 # 2026
 
-
-**Resources**
-
-# 2025
-
 ```{r}
-#| label: extract-prompts
+#| label: extract-prompts-2026
 
-prompts <- read.delim("../2025/2025-list_prompts.md", header = T, col.names = "prompt")
-
-# clean up markdown styling characters
-prompts <- prompts |> 
-  mutate(prompt = gsub("  |[\\]|[*]", "", prompt))
-
-# Isolate category amd prompt into separate columns
-prompts <- prompts |> 
-  mutate(prompt_day = as.numeric(gsub(". ", "", str_extract(string = prompt, pattern = "^\\d+. "))),
-         category = case_when(
-           is.na(prompt_day) ~ gsub(" ", "", prompt),
-           TRUE ~ NA
-         ),
-         prompt = str_to_sentence(gsub("\\d+. ", "", prompt))) |> 
-  fill(category, .direction = "down") |> 
-  filter_out(is.na(prompt_day))
+prompts <- CleanPromptsMd(prompts_path = "../2026/2026-list_prompts.md")
 ```
 
 
 ```{r}
-#| label: identify-prompts-with-plots
+#| label: identify-prompts-with-plots-2026
+
+plot_files <- list.files("../2026/plots/", pattern = "png", full.names = T)
+
+df_plots <- data.frame(
+  "path" = plot_files,
+  "prompt_day" = as.numeric(str_extract(string = basename(plot_files), pattern = "^\\d+"))
+) |> 
+  left_join(prompts, by = "prompt_day")
+
+df_plots <- df_plots |> 
+  filter_out(grepl("exclude.png",  path))
+
+# Categories with plots
+categories <- unique(df_plots$category)
+```
+
+
+```{r}
+#| label: display-2026
+#| results: asis
+
+DisplayPlots(df_plots)
+```
+
+**Resources**
+
+
+
+# 2025
+
+```{r}
+#| label: extract-prompts-2025
+
+prompts <- CleanPromptsMd("../2025/2025-list_prompts.md")
+```
+
+
+```{r}
+#| label: identify-prompts-with-plots-2025
 
 plot_files <- list.files("../2025/plots/", pattern = "png", full.names = T)
 
@@ -64,32 +148,10 @@ categories <- unique(df_plots$category)
 
 
 ```{r}
+#| label: display-2025
 #| results: asis
 
-for (ctg in categories) {
-  ctg_plots <- filter(df_plots, category == ctg)
-  
-  cat(paste0(sprintf("## %s", ctg)), "\n\n")
-  
-  cat("::: {.columns layout-ncol=2}\n\n")
-  
-  for (d in ctg_plots$prompt_day) {
-    pprompt <- ctg_plots[ctg_plots$prompt_day == d, ]$prompt
-    path  <- ctg_plots[ctg_plots$prompt_day == d, ]$path
-
-    cat(
-      sprintf(
-        '![Day %s: %s](%s){margin="50px 50px 50px 50px"}\n\n',
-        d,
-        pprompt,
-        path
-      )
-    )
-  }
-  
-  cat(":::\n\n")
-  
-}
+DisplayPlots(df_plots)
 ```
 
 **Resources**
