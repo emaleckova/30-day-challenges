@@ -15,3 +15,9 @@ format:
       - cosmo
     toc: true
     self-contained: true
+    
+execute:
+  error: false
+  message: false
+  warning: false
+  echo: false
