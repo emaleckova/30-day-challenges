@@ -134,9 +134,10 @@ DisplayPlots(df_plots)
 ```
 
 
-**Resources**
-
-
+## Resources
+- data from `{NHANES}` package for R  
+- `PrecipGL` data from the `{Kendall}` package for R  
+- population growth data by [UN(]https://data.un.org/) (file `SYB61_253_Population_Growth_Rates_in Urban areas and Capital cities.csv`)  
 
 # 2025
 
@@ -181,4 +182,8 @@ DisplayPlots(df_plots)
 ```
 
 
-**Resources**
+## Resources
+- Our Wolrd in Data: [https://ourworldindata.org/grapher/number-of-internet-users?tab=table](https://ourworldindata.org/grapher/number-of-internet-users?tab=table)  
+- Our Wolrd in Data: [https://ourworldindata.org/how-urban-is-the-world](https://ourworldindata.org/how-urban-is-the-world)  
+- [Fisheries Inventory, Trout Data, at Rocky Mountain National Park 2021-2022 by data.gov](https://catalog.data.gov/dataset/fisheries-inventory-trout-data-at-rocky-mountain-national-park-2021-2022-open-format-datas)  
+- [GHS-COUNTRY-STATS R2024A - GHSL Country Statistics by Degree of Urbanization, multitemporal (1975-2030)](https://data.jrc.ec.europa.eu/dataset/341c0608-5ca5-4ddb-b068-a412e35a3326)  
